@@ -12,6 +12,7 @@ class CSVParser
     parser = new filename
     parser.convert_timestamp
     parser.convert_zipcode
+    parser.upcase_name
     parser.convert_foo_duration_seconds
     parser.convert_bar_duration_seconds
     parser.sum_durations
@@ -33,6 +34,12 @@ class CSVParser
   def convert_zipcode
     @csv = csv.each do |line|
       line[2] = line[2].rjust(ZIP_CODE_LENGTH, ZIP_CODE_PLACEHOLDER)
+    end
+  end
+
+  def upcase_name
+    @csv = csv.each do |line|
+      line[3] = line[3].upcase
     end
   end
 
