@@ -14,8 +14,8 @@ class CSVParser
       line[0] = parser.convert_timestamp(line[0])
       line[2] = parser.convert_zipcode(line[2])
       line[3] = parser.upcase_name(line[3])
-      line[4] = parser.convert_foo_duration_seconds(line[4])
-      line[5] = parser.convert_bar_duration_seconds(line[5])
+      line[4] = parser.convert_duration_to_seconds(line[4])
+      line[5] = parser.convert_duration_to_seconds(line[5])
       line[6] = parser.sum_durations(line[4], line[5])
     end
     parser.csv
@@ -39,25 +39,15 @@ class CSVParser
     name.upcase
   end
 
-  def convert_foo_duration_seconds(foo)
-    convert_duration_to_seconds(foo)
-  end
-
-  def convert_bar_duration_seconds(bar)
-    convert_duration_to_seconds(bar)
-  end
-
-  def sum_durations(foo, bar)
-    (BigDecimal.new("#{foo}") + BigDecimal.new("#{bar}")).to_f
-  end
-
-  private
-
   def convert_duration_to_seconds(duration)
     duration_parts = duration.split(':')
     hour_seconds = duration_parts[0].to_i * 60 * 60
     minute_seconds = duration_parts[1].to_i * 60
     second_seconds = duration_parts[2].to_f
     hour_seconds + minute_seconds + second_seconds
+  end
+
+  def sum_durations(foo, bar)
+    (BigDecimal.new("#{foo}") + BigDecimal.new("#{bar}")).to_f
   end
 end

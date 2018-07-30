@@ -62,18 +62,9 @@ RSpec.describe CSVParser do
     end
   end
 
-  describe '#convert_foo_duration_to_seconds' do
+  describe '#convert_duration_to_seconds' do
     let(:duration) { '111:23:32.123' }
-    subject { CSVParser.new(file_name).convert_foo_duration_seconds(duration) }
-
-    it 'converts duration to number of seconds' do
-      expect(subject).to eq(401012.123)
-    end
-  end
-
-  describe '#convert_bar_duration_to_seconds' do
-    let(:duration) { '111:23:32.123' }
-    subject { CSVParser.new(file_name).convert_bar_duration_seconds(duration) }
+    subject { CSVParser.new(file_name).convert_duration_to_seconds(duration) }
 
     it 'converts duration to number of seconds' do
       expect(subject).to eq(401012.123)
