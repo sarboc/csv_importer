@@ -21,6 +21,7 @@ class CSVParser
         foo_duration,
         bar_duration,
         sum_durations(foo_duration, bar_duration),
+        line[7],
       ]
     end
   end

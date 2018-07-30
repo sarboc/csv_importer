@@ -7,9 +7,9 @@ RSpec.describe CSVParser do
   describe '.parse' do
     let(:file_data) do
       [
-        ['timestamp', 'address', 'zipcode', 'name', 'foo', 'bar', 'duration'],
-        ['1/1/11 12:00:01 AM', '', '1', 'Superman übertan', '1:23:32.123', '0:0:0.1', 'asasasas'],
-        ['12/31/16 11:59:59 PM', '', '94121', '株式会社スタジオジブリ', '0:0:0.1', '0:23:32.123', 'asasasas'],
+        ['timestamp', 'address', 'zipcode', 'name', 'foo', 'bar', 'duration', 'notes'],
+        ['1/1/11 12:00:01 AM', '', '1', 'Superman übertan', '1:23:32.123', '0:0:0.1', 'asasasas', 'notes1'],
+        ['12/31/16 11:59:59 PM', '', '94121', '株式会社スタジオジブリ', '0:0:0.1', '0:23:32.123', 'asasasas', 'notes2'],
       ]
     end
 
@@ -19,9 +19,9 @@ RSpec.describe CSVParser do
 
     it 'returns the csv format for the given file' do
       expect(CSVParser.parse(file_name)).to eq([
-        ['timestamp', 'address', 'zipcode', 'name', 'foo', 'bar', 'duration'],
-        ['2011-01-01T03:00:01-05:00', '', '00001', 'SUPERMAN ÜBERTAN', 5012.123, 0.1, 5012.223],
-        ['2017-01-01T02:59:59-05:00', '', '94121', '株式会社スタジオジブリ', 0.1, 1412.123, 1412.223]
+        ['timestamp', 'address', 'zipcode', 'name', 'foo', 'bar', 'duration', 'notes'],
+        ['2011-01-01T03:00:01-05:00', '', '00001', 'SUPERMAN ÜBERTAN', 5012.123, 0.1, 5012.223, 'notes1'],
+        ['2017-01-01T02:59:59-05:00', '', '94121', '株式会社スタジオジブリ', 0.1, 1412.123, 1412.223, 'notes2']
       ])
     end
   end
