@@ -3,11 +3,6 @@ require './lib/csv_parser'
 
 RSpec.describe CSVParser do
   let(:file_name) { "test_file.csv" }
-  let(:file_data) { "My sample csv file data" }
-
-  before do
-    expect(CSV).to receive(:read).with(file_name).and_return(file_data)
-  end
 
   describe '.parse' do
     let(:file_data) do
@@ -15,6 +10,10 @@ RSpec.describe CSVParser do
         ['1/1/11 12:00:01 AM', '', '1', 'Superman übertan', '1:23:32.123', '0:0:0.1', 'asasasas'],
         ['12/31/16 11:59:59 PM', '', '94121', '株式会社スタジオジブリ', '0:0:0.1', '0:23:32.123', 'asasasas'],
       ]
+    end
+
+    before do
+      expect(CSV).to receive(:read).with(file_name).and_return(file_data)
     end
 
     it 'returns the csv format for the given file' do
@@ -27,7 +26,7 @@ RSpec.describe CSVParser do
 
   describe '#convert_timestamp' do
     let(:timestamp) { '12/31/16 11:59:59 PM' }
-    subject { CSVParser.new(file_name).convert_timestamp(timestamp) }
+    subject { CSVParser.convert_timestamp(timestamp) }
 
     it 'parses outputs ISO format in the EST time zone' do
       expect(subject).to eq('2017-01-01T02:59:59-05:00')
@@ -36,7 +35,7 @@ RSpec.describe CSVParser do
 
   describe '#convert_zipcode' do
     let(:zipcode) { '1' }
-    subject { CSVParser.new(file_name).convert_zipcode(zipcode) }
+    subject { CSVParser.convert_zipcode(zipcode) }
 
     it 'converts zipcodes to be exactly 5 digits long' do
       expect(subject).to eq('00001')
@@ -44,7 +43,7 @@ RSpec.describe CSVParser do
   end
 
   describe "#upcase_name" do
-    subject { CSVParser.new(file_name).upcase_name(name) }
+    subject { CSVParser.upcase_name(name) }
 
     context 'when name is all English characters with no accents' do
       let(:name) { 'steve' }
@@ -64,7 +63,7 @@ RSpec.describe CSVParser do
 
   describe '#convert_duration_to_seconds' do
     let(:duration) { '111:23:32.123' }
-    subject { CSVParser.new(file_name).convert_duration_to_seconds(duration) }
+    subject { CSVParser.convert_duration_to_seconds(duration) }
 
     it 'converts duration to number of seconds' do
       expect(subject).to eq(401012.123)
@@ -74,7 +73,7 @@ RSpec.describe CSVParser do
   describe '#sum_durations' do
     let(:foo) { 5012.123 }
     let(:bar) { 401012.123 }
-    subject { CSVParser.new(file_name).sum_durations(foo, bar) }
+    subject { CSVParser.sum_durations(foo, bar) }
 
     it 'converts duration to number of seconds' do
       expect(subject).to eq(406024.246)

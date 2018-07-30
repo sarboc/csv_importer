@@ -9,37 +9,36 @@ class CSVParser
   attr_accessor :csv
 
   def self.parse(filename)
-    parser = new filename
-    parser.csv = parser.csv.each do |line|
-      line[0] = parser.convert_timestamp(line[0])
-      line[2] = parser.convert_zipcode(line[2])
-      line[3] = parser.upcase_name(line[3])
-      line[4] = parser.convert_duration_to_seconds(line[4])
-      line[5] = parser.convert_duration_to_seconds(line[5])
-      line[6] = parser.sum_durations(line[4], line[5])
+    CSV.read(filename).map do |line|
+      foo_duration = convert_duration_to_seconds(line[4])
+      bar_duration = convert_duration_to_seconds(line[5])
+      [
+        convert_timestamp(line[0]),
+        line[1],
+        convert_zipcode(line[2]),
+        upcase_name(line[3]),
+        foo_duration,
+        bar_duration,
+        sum_durations(foo_duration, bar_duration),
+      ]
     end
-    parser.csv
   end
 
-  def initialize(filename)
-    @csv = CSV.read(filename)
-  end
-
-  def convert_timestamp(timestamp)
+  def self.convert_timestamp(timestamp)
     Time.strptime("#{timestamp} PST", '%m/%e/%y %r %Z')
         .in_time_zone(EST_TIME_ZONE)
         .iso8601
   end
 
-  def convert_zipcode(zipcode)
+  def self.convert_zipcode(zipcode)
     zipcode.rjust(ZIP_CODE_LENGTH, ZIP_CODE_PLACEHOLDER)
   end
 
-  def upcase_name(name)
+  def self.upcase_name(name)
     name.upcase
   end
 
-  def convert_duration_to_seconds(duration)
+  def self.convert_duration_to_seconds(duration)
     duration_parts = duration.split(':')
     hour_seconds = duration_parts[0].to_i * 60 * 60
     minute_seconds = duration_parts[1].to_i * 60
@@ -47,7 +46,7 @@ class CSVParser
     hour_seconds + minute_seconds + second_seconds
   end
 
-  def sum_durations(foo, bar)
+  def self.sum_durations(foo, bar)
     (BigDecimal.new("#{foo}") + BigDecimal.new("#{bar}")).to_f
   end
 end
