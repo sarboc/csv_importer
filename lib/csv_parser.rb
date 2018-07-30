@@ -6,16 +6,18 @@ class CSVParser
   ZIP_CODE_LENGTH = 5
   ZIP_CODE_PLACEHOLDER = '0'
 
-  attr_reader :csv
+  attr_accessor :csv
 
   def self.parse(filename)
     parser = new filename
-    parser.convert_timestamp
-    parser.convert_zipcode
-    parser.upcase_name
-    parser.convert_foo_duration_seconds
-    parser.convert_bar_duration_seconds
-    parser.sum_durations
+    parser.csv = parser.csv.each do |line|
+      line[0] = parser.convert_timestamp(line[0])
+      line[2] = parser.convert_zipcode(line[2])
+      line[3] = parser.upcase_name(line[3])
+      line[4] = parser.convert_foo_duration_seconds(line[4])
+      line[5] = parser.convert_bar_duration_seconds(line[5])
+      line[6] = parser.sum_durations(line[4], line[5])
+    end
     parser.csv
   end
 
@@ -23,42 +25,30 @@ class CSVParser
     @csv = CSV.read(filename)
   end
 
-  def convert_timestamp
-    @csv = csv.each do |line|
-      line[0] = Time.strptime("#{line[0]} PST", '%m/%e/%y %r %Z')
-                    .in_time_zone(EST_TIME_ZONE)
-                    .iso8601
-    end
+  def convert_timestamp(timestamp)
+    Time.strptime("#{timestamp} PST", '%m/%e/%y %r %Z')
+        .in_time_zone(EST_TIME_ZONE)
+        .iso8601
   end
 
-  def convert_zipcode
-    @csv = csv.each do |line|
-      line[2] = line[2].rjust(ZIP_CODE_LENGTH, ZIP_CODE_PLACEHOLDER)
-    end
+  def convert_zipcode(zipcode)
+    zipcode.rjust(ZIP_CODE_LENGTH, ZIP_CODE_PLACEHOLDER)
   end
 
-  def upcase_name
-    @csv = csv.each do |line|
-      line[3] = line[3].upcase
-    end
+  def upcase_name(name)
+    name.upcase
   end
 
-  def convert_foo_duration_seconds
-    @csv = csv.each do |line|
-      line[4] = convert_duration_to_seconds(line[4])
-    end
+  def convert_foo_duration_seconds(foo)
+    convert_duration_to_seconds(foo)
   end
 
-  def convert_bar_duration_seconds
-    @csv = csv.each do |line|
-      line[5] = convert_duration_to_seconds(line[5])
-    end
+  def convert_bar_duration_seconds(bar)
+    convert_duration_to_seconds(bar)
   end
 
-  def sum_durations
-    @csv = csv.each do |line|
-      line[6] = (BigDecimal.new("#{line[4]}") + BigDecimal.new("#{line[5]}")).to_f
-    end
+  def sum_durations(foo, bar)
+    (BigDecimal.new("#{foo}") + BigDecimal.new("#{bar}")).to_f
   end
 
   private

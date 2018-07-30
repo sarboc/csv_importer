@@ -26,102 +26,67 @@ RSpec.describe CSVParser do
   end
 
   describe '#convert_timestamp' do
-    let(:file_data) do
-      [
-        ['1/1/11 12:00:01 AM'],
-        ['12/31/16 11:59:59 PM'],
-      ]
-    end
-    subject { CSVParser.new(file_name).convert_timestamp }
+    let(:timestamp) { '12/31/16 11:59:59 PM' }
+    subject { CSVParser.new(file_name).convert_timestamp(timestamp) }
 
     it 'parses outputs ISO format in the EST time zone' do
-      expect(subject[0][0]).to eq('2011-01-01T03:00:01-05:00')
-      expect(subject[1][0]).to eq('2017-01-01T02:59:59-05:00')
+      expect(subject).to eq('2017-01-01T02:59:59-05:00')
     end
   end
 
   describe '#convert_zipcode' do
-    let(:file_data) do
-      [
-        ['', '', '1'],
-        ['', '', '581'],
-        ['', '', '94121'],
-      ]
-    end
-    subject { CSVParser.new(file_name).convert_zipcode }
+    let(:zipcode) { '1' }
+    subject { CSVParser.new(file_name).convert_zipcode(zipcode) }
 
     it 'converts zipcodes to be exactly 5 digits long' do
-      expect(subject[0][2]).to eq('00001')
-      expect(subject[1][2]).to eq('00581')
-      expect(subject[2][2]).to eq('94121')
+      expect(subject).to eq('00001')
     end
   end
 
   describe "#upcase_name" do
-    let(:file_data) do
-      [
-        ['', '', '', 'Superman übertan'],
-        ['', '', '', '株式会社スタジオジブリ'],
-        ['', '', '', 'steve'],
-      ]
-    end
-    subject { CSVParser.new(file_name).upcase_name }
+    subject { CSVParser.new(file_name).upcase_name(name) }
 
-    it 'converts all names to upper case' do
-      expect(subject[0][3]).to eq('SUPERMAN ÜBERTAN')
-      expect(subject[1][3]).to eq('株式会社スタジオジブリ')
-      expect(subject[2][3]).to eq('STEVE')
+    context 'when name is all English characters with no accents' do
+      let(:name) { 'steve' }
+      it {is_expected.to eq('STEVE')}
+    end
+
+    context 'when name contains accents' do
+      let(:name) { 'Superman übertan' }
+      it {is_expected.to eq('SUPERMAN ÜBERTAN')}
+    end
+
+    context 'when name is non-English characters' do
+      let(:name) { '株式会社スタジオジブリ' }
+      it {is_expected.to eq('株式会社スタジオジブリ')}
     end
   end
 
   describe '#convert_foo_duration_to_seconds' do
-    let(:file_data) do
-      [
-        ['', '', '', '', '1:23:32.123'],
-        ['', '', '', '', '111:23:32.123'],
-        ['', '', '', '', '0:0:0.1'],
-      ]
-    end
-    subject { CSVParser.new(file_name).convert_foo_duration_seconds }
+    let(:duration) { '111:23:32.123' }
+    subject { CSVParser.new(file_name).convert_foo_duration_seconds(duration) }
 
     it 'converts duration to number of seconds' do
-      expect(subject[0][4]).to eq(5012.123)
-      expect(subject[1][4]).to eq(401012.123)
-      expect(subject[2][4]).to eq(0.1)
+      expect(subject).to eq(401012.123)
     end
   end
 
   describe '#convert_bar_duration_to_seconds' do
-    let(:file_data) do
-      [
-        ['', '', '', '', '', '1:23:32.123'],
-        ['', '', '', '', '', '111:23:32.123'],
-        ['', '', '', '', '', '0:0:0.1'],
-      ]
-    end
-    subject { CSVParser.new(file_name).convert_bar_duration_seconds }
+    let(:duration) { '111:23:32.123' }
+    subject { CSVParser.new(file_name).convert_bar_duration_seconds(duration) }
 
     it 'converts duration to number of seconds' do
-      expect(subject[0][5]).to eq(5012.123)
-      expect(subject[1][5]).to eq(401012.123)
-      expect(subject[2][5]).to eq(0.1)
+      expect(subject).to eq(401012.123)
     end
   end
 
   describe '#sum_durations' do
-    let(:file_data) do
-      [
-        ['', '', '', '', 5012.123, 5012.123],
-        ['', '', '', '', 5012.123, 401012.123],
-        ['', '', '', '', 34.567, 0.1],
-      ]
-    end
-    subject { CSVParser.new(file_name).sum_durations }
+    let(:foo) { 5012.123 }
+    let(:bar) { 401012.123 }
+    subject { CSVParser.new(file_name).sum_durations(foo, bar) }
 
     it 'converts duration to number of seconds' do
-      expect(subject[0][6]).to eq(10024.246)
-      expect(subject[1][6]).to eq(406024.246)
-      expect(subject[2][6]).to eq(34.667)
+      expect(subject).to eq(406024.246)
     end
   end
 end
