@@ -4,6 +4,11 @@ Truss, [check out our jobs page](https://truss.works/jobs)._
 
 # Truss Software Engineering Interview
 
+## Basic app instructions
+ - Clone the source code locally
+ - Run `bundle install`
+ - Run the application: `ruby parse_csv.rb "full_path_to_file.csv"`
+
 ## Introduction and expectations
 
 Hi there! Please complete the problem described below to the best of
