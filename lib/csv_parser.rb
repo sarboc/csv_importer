@@ -9,7 +9,8 @@ class CSVParser
   attr_accessor :csv
 
   def self.parse(filename)
-    CSV.read(filename).map do |line|
+    csv = CSV.read(filename)
+    [csv[0]] + csv[1..-1].map do |line|
       foo_duration = convert_duration_to_seconds(line[4])
       bar_duration = convert_duration_to_seconds(line[5])
       [
