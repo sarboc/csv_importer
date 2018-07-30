@@ -12,15 +12,15 @@ RSpec.describe CSVParser do
   describe '.parse' do
     let(:file_data) do
       [
-        ['1/1/11 12:00:01 AM'],
-        ['12/31/16 11:59:59 PM'],
+        ['1/1/11 12:00:01 AM', '', '1'],
+        ['12/31/16 11:59:59 PM', '', '94121'],
       ]
     end
 
     it 'returns the csv format for the given file' do
       expect(CSVParser.parse(file_name)).to eq([
-        ['2011-01-01T03:00:01-05:00'],
-        ['2017-01-01T02:59:59-05:00']
+        ['2011-01-01T03:00:01-05:00', '', '00001'],
+        ['2017-01-01T02:59:59-05:00', '', '94121']
       ])
     end
   end
@@ -37,6 +37,23 @@ RSpec.describe CSVParser do
     it 'parses outputs ISO format in the EST time zone' do
       expect(subject[0][0]).to eq('2011-01-01T03:00:01-05:00')
       expect(subject[1][0]).to eq('2017-01-01T02:59:59-05:00')
+    end
+  end
+
+  describe '#convert_zipcode' do
+    let(:file_data) do
+      [
+        ['', '', '1'],
+        ['', '', '581'],
+        ['', '', '94121'],
+      ]
+    end
+    subject { CSVParser.new(file_name).convert_zipcode }
+
+    it 'converts zipcodes to be exactly 5 digits long' do
+      expect(subject[0][2]).to eq('00001')
+      expect(subject[1][2]).to eq('00581')
+      expect(subject[2][2]).to eq('94121')
     end
   end
 end
