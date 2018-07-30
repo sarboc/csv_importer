@@ -13,6 +13,7 @@ class CSVParser
     parser.convert_timestamp
     parser.convert_zipcode
     parser.convert_foo_duration_seconds
+    parser.convert_bar_duration_seconds
     parser.csv
   end
 
@@ -36,11 +37,23 @@ class CSVParser
 
   def convert_foo_duration_seconds
     @csv = csv.each do |line|
-      duration = line[4].split(':')
-      hour_seconds = duration[0].to_i * 60 * 60
-      minute_seconds = duration[1].to_i * 60
-      second_seconds = duration[2].to_f
-      line[4] = hour_seconds + minute_seconds + second_seconds
+      line[4] = convert_duration_to_seconds(line[4])
     end
+  end
+
+  def convert_bar_duration_seconds
+    @csv = csv.each do |line|
+      line[5] = convert_duration_to_seconds(line[5])
+    end
+  end
+
+  private
+
+  def convert_duration_to_seconds(duration)
+    duration_parts = duration.split(':')
+    hour_seconds = duration_parts[0].to_i * 60 * 60
+    minute_seconds = duration_parts[1].to_i * 60
+    second_seconds = duration_parts[2].to_f
+    hour_seconds + minute_seconds + second_seconds
   end
 end
