@@ -12,15 +12,15 @@ RSpec.describe CSVParser do
   describe '.parse' do
     let(:file_data) do
       [
-        ['1/1/11 12:00:01 AM', '', '1', '', '1:23:32.123', '0:0:0.1'],
-        ['12/31/16 11:59:59 PM', '', '94121', '', '0:0:0.1', '0:23:32.123'],
+        ['1/1/11 12:00:01 AM', '', '1', '', '1:23:32.123', '0:0:0.1', 'asasasas'],
+        ['12/31/16 11:59:59 PM', '', '94121', '', '0:0:0.1', '0:23:32.123', 'asasasas'],
       ]
     end
 
     it 'returns the csv format for the given file' do
       expect(CSVParser.parse(file_name)).to eq([
-        ['2011-01-01T03:00:01-05:00', '', '00001', '', 5012.123, 0.1],
-        ['2017-01-01T02:59:59-05:00', '', '94121', '', 0.1, 1412.123]
+        ['2011-01-01T03:00:01-05:00', '', '00001', '', 5012.123, 0.1, 5012.223],
+        ['2017-01-01T02:59:59-05:00', '', '94121', '', 0.1, 1412.123, 1412.223]
       ])
     end
   end
@@ -88,6 +88,23 @@ RSpec.describe CSVParser do
       expect(subject[0][5]).to eq(5012.123)
       expect(subject[1][5]).to eq(401012.123)
       expect(subject[2][5]).to eq(0.1)
+    end
+  end
+
+  describe '#sum_durations' do
+    let(:file_data) do
+      [
+        ['', '', '', '', 5012.123, 5012.123],
+        ['', '', '', '', 5012.123, 401012.123],
+        ['', '', '', '', 34.567, 0.1],
+      ]
+    end
+    subject { CSVParser.new(file_name).sum_durations }
+
+    it 'converts duration to number of seconds' do
+      expect(subject[0][6]).to eq(10024.246)
+      expect(subject[1][6]).to eq(406024.246)
+      expect(subject[2][6]).to eq(34.667)
     end
   end
 end

@@ -14,6 +14,7 @@ class CSVParser
     parser.convert_zipcode
     parser.convert_foo_duration_seconds
     parser.convert_bar_duration_seconds
+    parser.sum_durations
     parser.csv
   end
 
@@ -44,6 +45,12 @@ class CSVParser
   def convert_bar_duration_seconds
     @csv = csv.each do |line|
       line[5] = convert_duration_to_seconds(line[5])
+    end
+  end
+
+  def sum_durations
+    @csv = csv.each do |line|
+      line[6] = (BigDecimal.new("#{line[4]}") + BigDecimal.new("#{line[5]}")).to_f
     end
   end
 
